@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Job Skill Planner</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="intro">
+        <div>
+          <p class="eyebrow">Job search + skill gap planner</p>
+          <h1>Find real job posts and turn them into a study plan.</h1>
+          <p class="lede">
+            Enter a target role, experience level, and study pace. The app pulls live postings where public feeds provide direct job URLs, then builds a focused roadmap.
+          </p>
+        </div>
+      </section>
+
+      <section class="workspace" aria-label="Job planner workspace">
+        <form id="searchForm" class="panel controls">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Inputs</p>
+              <h2>Role search</h2>
+            </div>
+            <button class="icon-button" type="button" id="resetBtn" aria-label="Reset form" title="Reset form">
+              <span aria-hidden="true">R</span>
+            </button>
+          </div>
+
+          <label>
+            Target role or skill
+            <input id="roleInput" name="role" type="text" value="automation framework" autocomplete="off" required>
+          </label>
+
+          <div class="two-col">
+            <label>
+              Location
+              <input id="locationInput" name="location" type="text" value="United States" autocomplete="off">
+            </label>
+            <label>
+              Job type
+              <select id="jobTypeInput" name="jobType">
+                <option value="any">Any</option>
+                <option value="remote">Remote</option>
+                <option value="hybrid">Hybrid</option>
+                <option value="onsite">On-site</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            Keywords to prioritize
+            <input id="keywordsInput" name="keywords" type="text" value="Selenium, Playwright, JavaScript, CI/CD">
+          </label>
+
+          <div class="experience-grid">
+            <label>
+              Years in target skill
+              <input id="targetYearsInput" name="targetYears" type="number" min="0" max="40" step="0.5" value="1">
+            </label>
+            <label>
+              Related years
+              <input id="relatedYearsInput" name="relatedYears" type="number" min="0" max="40" step="0.5" value="10">
+            </label>
+            <label>
+              Weekly study hours
+              <input id="hoursInput" name="hours" type="number" min="2" max="40" step="1" value="8">
+            </label>
+          </div>
+
+          <label>
+            Current experience summary
+            <textarea id="experienceInput" name="experience" rows="5">Manual QA lead with strong test planning, defect triage, exploratory testing, regression ownership, and stakeholder communication. Newer to automation frameworks.</textarea>
+          </label>
+
+          <fieldset>
+            <legend>Job websites</legend>
+            <div class="source-list">
+              <label><input type="checkbox" name="sources" value="remotive" checked> Remotive</label>
+              <label><input type="checkbox" name="sources" value="arbeitnow" checked> Arbeitnow</label>
+              <label><input type="checkbox" name="sources" value="remoteok" checked> Remote OK search</label>
+              <label><input type="checkbox" name="sources" value="linkedin" checked> LinkedIn search</label>
+              <label><input type="checkbox" name="sources" value="indeed" checked> Indeed search</label>
+              <label><input type="checkbox" name="sources" value="google" checked> Google Jobs search</label>
+            </div>
+          </fieldset>
+
+          <button class="primary-button" type="submit">Search jobs and build plan</button>
+        </form>
+
+        <section class="results-stack">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Search</p>
+                <h2>Job matches</h2>
+              </div>
+              <span id="statusPill" class="status-pill">Ready</span>
+            </div>
+            <div id="jobResults" class="job-results empty">
+              <p>Run a search to see live postings with direct job URLs.</p>
+            </div>
+            <div id="searchLinks" class="search-links" aria-label="Job website search links"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Roadmap</p>
+                <h2>Study plan</h2>
+              </div>
+              <button class="secondary-button" id="copyPlanBtn" type="button">Copy plan</button>
+            </div>
+            <div id="planOutput" class="plan-output">
+              <p>Your custom plan will appear here after the first search.</p>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <template id="jobCardTemplate">
+      <article class="job-card">
+        <div>
+          <span class="job-source"></span>
+          <h3></h3>
+          <p class="job-meta"></p>
+          <p class="job-tags"></p>
+        </div>
+        <a target="_blank" rel="noreferrer">View job</a>
+      </article>
+    </template>
+
+    <template id="searchLinkTemplate">
+      <a class="search-link" target="_blank" rel="noreferrer"></a>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
