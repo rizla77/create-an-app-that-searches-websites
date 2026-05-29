@@ -1,497 +1,366 @@
-const sourceLabels = {
-  linkedin: "LinkedIn",
-  indeed: "Indeed",
-  google: "Google Jobs",
-  remoteok: "Remote OK",
-  remotive: "Remotive",
-  arbeitnow: "Arbeitnow"
+const state = {
+  lastCampaign: null,
+  run: 0
 };
 
-const skillCatalog = {
-  automation: [
-    "Automation pyramid, test selection, and maintainable test strategy",
-    "Selectors, waits, fixtures, page objects, and test data design",
-    "Playwright or Selenium fundamentals with one primary language",
-    "API testing, contract basics, and service-level assertions",
-    "CI/CD execution, reports, artifacts, retries, and flake analysis",
-    "Framework architecture, coding standards, and review habits"
-  ],
-  qa: [
-    "Risk-based testing, traceability, and acceptance criteria analysis",
-    "Defect reporting, triage facilitation, and release readiness signals",
-    "Exploratory testing charters and session notes",
-    "Regression strategy and test case portfolio cleanup"
-  ],
-  data: [
-    "SQL querying, joins, aggregations, and test data validation",
-    "Data quality checks, ETL validation, and dashboard sanity testing",
-    "Python notebooks or scripts for repeatable analysis"
-  ],
-  frontend: [
-    "HTML, CSS, browser DevTools, network inspection, and accessibility checks",
-    "JavaScript or TypeScript fundamentals",
-    "Component testing and visual regression basics"
-  ],
-  backend: [
-    "HTTP, REST, JSON, authentication, and common integration patterns",
-    "Database basics and environment configuration",
-    "Logging, observability, and failure-mode testing"
-  ],
-  cloud: [
-    "Git, pull requests, branching, and code review workflows",
-    "Docker fundamentals and environment parity",
-    "Cloud CI runners, secrets, and deployment gates"
-  ]
-};
+const money = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0
+});
 
-const feedSources = {
-  remotive: async ({ role }) => {
-    const response = await fetch(`https://remotive.com/api/remote-jobs?search=${encodeURIComponent(role)}`);
-    if (!response.ok) throw new Error("Remotive did not respond");
-    const data = await response.json();
-    return (data.jobs || []).map((job) => ({
-      source: "Remotive",
-      title: job.title,
-      company: job.company_name || "Company not listed",
-      location: job.candidate_required_location || "Remote",
-      tags: [job.category, ...(job.tags || [])].filter(Boolean).slice(0, 5),
-      url: normalizeUrl(job.url),
-      description: stripHtml(job.description || "")
-    }))
-      .filter((job) => isActualJob(job) && matchesProfile(job, role))
-      .slice(0, 8);
+const hooks = [
+  "Most people do this backwards",
+  "The simple version is usually the profitable version",
+  "Before you buy another tool, fix this first",
+  "This is how I would launch it if I needed cash flow quickly",
+  "Stop planning the perfect funnel and publish the useful one"
+];
+
+const angles = [
+  { label: "Proof-first", structure: "show the problem, show the cost, then show the next step" },
+  { label: "Checklist", structure: "give a short checklist people can use today" },
+  { label: "Comparison", structure: "compare the slow way against the faster practical way" },
+  { label: "Mistake", structure: "name the common mistake and replace it with a smaller action" },
+  { label: "Story", structure: "start with the stressful situation and lead to the useful fix" }
+];
+
+const ctas = [
+  "Use the free studio, then grab the tool that fits your next step.",
+  "Start with one campaign today and send traffic to one clear link.",
+  "If this saves you time, use the recommended stack to build it faster.",
+  "Turn the idea into a post, an email, and one monetized recommendation.",
+  "Keep the path simple: useful content, disclosed link, email capture, offer."
+];
+
+const tools = [
+  {
+    name: "Bluehost",
+    category: "Hosting",
+    description: "Primary hosting recommendation for WordPress sites, landing pages, and affiliate resource pages.",
+    url: "https://bluehost.sjv.io/c/3128380/1376228/11352",
+    button: "Visit Bluehost"
   },
-  arbeitnow: async ({ role, location }) => {
-    const response = await fetch("https://www.arbeitnow.com/api/job-board-api");
-    if (!response.ok) throw new Error("Arbeitnow did not respond");
-    const data = await response.json();
-    return (data.data || []).map((job) => ({
-      source: "Arbeitnow",
-      title: job.title,
-      company: job.company_name || "Company not listed",
-      location: job.location || location || "Location varies",
-      tags: [job.job_types, job.remote ? "Remote" : ""].flat().filter(Boolean).slice(0, 5),
-      url: normalizeUrl(job.url),
-      description: stripHtml(job.description || "")
-    }))
-      .filter((job) => isActualJob(job) && matchesProfile(job, role))
-      .slice(0, 8);
+  {
+    name: "MailerLite",
+    category: "Email",
+    description: "Use for lead magnets, newsletters, broadcasts, and affiliate follow-up sequences.",
+    url: "https://bit.ly/gemautoresponder",
+    button: "Try MailerLite"
+  },
+  {
+    name: "AWeber",
+    category: "Email",
+    description: "Established autoresponder for newsletters, opt-in pages, and simple follow-up campaigns.",
+    url: "https://bit.ly/awebert",
+    button: "Try AWeber"
+  },
+  {
+    name: "GroovePages",
+    category: "Funnels",
+    description: "Build opt-in pages, affiliate bridge pages, sales pages, and simple launch funnels.",
+    url: "https://bit.ly/groovetools",
+    button: "Open GroovePages"
+  },
+  {
+    name: "LeadCreator",
+    category: "Lead magnets",
+    description: "Good fit for lead magnet, list-building, and funnel content.",
+    url: "https://app.leadcreator.ai/q7tvx2vz06",
+    button: "Open LeadCreator"
+  },
+  {
+    name: "Descript",
+    category: "Video",
+    description: "Apply if you want a creator-tool affiliate path for captions, transcripts, clips, and faceless video.",
+    url: "https://www.descript.com/affiliate",
+    button: "Apply"
+  },
+  {
+    name: "HostPapa",
+    category: "Hosting",
+    description: "Primary hosting card reserved for your approved HostPapa affiliate link.",
+    url: "",
+    button: "Add link"
+  },
+  {
+    name: "Namecheap",
+    category: "Domains",
+    description: "Primary domain and hosting card reserved for your approved Namecheap affiliate link.",
+    url: "",
+    button: "Add link"
+  }
+];
+
+const channelBuilders = {
+  instagram(campaign) {
+    return `INSTAGRAM CAROUSEL
+
+Slide 1: ${campaign.hook}: ${campaign.topic}
+Slide 2: The expensive problem: ${campaign.audience} wait too long to publish.
+Slide 3: Use this structure: ${campaign.angle.structure}.
+Slide 4: One post should lead to one next step, not five choices.
+Slide 5: Recommended tool: ${recommendedTool(campaign)}.
+Slide 6: Disclosure: this may include affiliate links.
+Slide 7: CTA: ${campaign.cta}`;
+  },
+  tiktok(campaign) {
+    return `TIKTOK / REELS SCRIPT
+
+Hook: ${campaign.hook}.
+Body: If you are working on ${campaign.topic}, the goal is not to create more random content. The goal is to create one useful asset that points to one next action.
+Proof: ${campaign.sourceSummary}
+CTA: ${campaign.cta}`;
+  },
+  youtube(campaign) {
+    return `YOUTUBE SHORT OUTLINE
+
+Title: ${campaign.topic}: the fastest useful launch path
+0-3s: ${campaign.hook}
+4-20s: Show the before state for ${campaign.audience}.
+21-45s: Walk through ${campaign.angle.structure}.
+46-58s: Mention the tool or product only after the useful step.
+CTA: ${campaign.cta}`;
+  },
+  faceless(campaign) {
+    return `FACELESS VIDEO PLAN
+
+Voiceover: ${campaign.hook}. Here is the simple way to turn ${campaign.topic} into a money path without overbuilding.
+Scenes:
+1. Screen recording of the free studio.
+2. Cursor highlights one generated post.
+3. Show a checklist: content, affiliate link, email capture, product.
+4. Show the recommended tool or $29 kit.
+On-screen text: Useful content first. Monetized next step second.
+CTA: ${campaign.cta}`;
+  },
+  email(campaign) {
+    return `EMAIL
+
+Subject: A simpler way to launch ${campaign.topic}
+
+If you are a ${campaign.audience}, the slow part is usually not ideas. It is turning ideas into something publishable.
+
+Try this:
+1. Pick one topic.
+2. Generate one short video, one email, and one recommendation.
+3. Publish today.
+4. Track clicks and replies.
+
+Useful next step: ${recommendedTool(campaign)}.
+
+Disclosure: some links may be affiliate links.
+
+${campaign.cta}`;
+  },
+  blog(campaign) {
+    return `BLOG OUTLINE
+
+Headline: How to launch ${campaign.topic} without overbuilding
+
+Sections:
+1. Why unfinished products fail to earn
+2. The ${campaign.angle.label.toLowerCase()} approach
+3. The free tool to create traffic assets
+4. Where affiliate recommendations fit honestly
+5. When to offer the $29 kit
+6. What to publish over the next seven days`;
+  },
+  linkedin(campaign) {
+    return `LINKEDIN POST
+
+${campaign.hook}.
+
+Unfinished products do not make money because they are not connected to traffic and a clear next step.
+
+For ${campaign.topic}, I would use this path:
+- free useful tool
+- one traffic asset per day
+- one disclosed recommendation
+- one low-ticket paid product
+
+Today's angle: ${campaign.angle.structure}.
+
+${campaign.cta}`;
   }
 };
 
-const searchBuilders = {
-  linkedin: ({ role, location, jobType, keywords }) => {
-    const parts = [role, keywords, jobType === "any" ? "" : jobType].filter(Boolean).join(" ");
-    return `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(parts)}&location=${encodeURIComponent(location || "United States")}`;
-  },
-  indeed: ({ role, location, jobType, keywords }) => {
-    const parts = [role, keywords, jobType === "any" ? "" : jobType].filter(Boolean).join(" ");
-    return `https://www.indeed.com/jobs?q=${encodeURIComponent(parts)}&l=${encodeURIComponent(location || "")}`;
-  },
-  google: ({ role, location, jobType, keywords }) => {
-    const parts = [role, keywords, jobType === "any" ? "" : jobType, "jobs", location].filter(Boolean).join(" ");
-    return `https://www.google.com/search?q=${encodeURIComponent(parts)}&ibp=htl;jobs`;
-  },
-  remoteok: ({ role }) => `https://remoteok.com/remote-${encodeURIComponent(role.replace(/\s+/g, "-"))}-jobs`,
-  remotive: ({ role }) => `https://remotive.com/remote-jobs/search?search=${encodeURIComponent(role)}`,
-  arbeitnow: ({ role }) => `https://www.arbeitnow.com/jobs/remote/${encodeURIComponent(role.replace(/\s+/g, "-"))}`
-};
+function pick(list, offset = 0) {
+  return list[(state.run + offset) % list.length];
+}
 
-const form = document.querySelector("#searchForm");
-const statusPill = document.querySelector("#statusPill");
-const jobResults = document.querySelector("#jobResults");
-const planOutput = document.querySelector("#planOutput");
-const copyPlanBtn = document.querySelector("#copyPlanBtn");
-const resetBtn = document.querySelector("#resetBtn");
-const jobTemplate = document.querySelector("#jobCardTemplate");
-const searchLinks = document.querySelector("#searchLinks");
-const searchLinkTemplate = document.querySelector("#searchLinkTemplate");
+function getTopic() {
+  const topic = document.querySelector("#topicSelect").value;
+  if (topic === "Custom topic") {
+    return document.querySelector("#customTopic").value.trim() || "online business launch";
+  }
+  return topic;
+}
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const profile = readProfile();
-  statusPill.textContent = "Searching";
-  renderLoading(profile);
+function buildCampaign() {
+  state.run += 1;
+  const topic = getTopic();
+  const audience = document.querySelector("#audienceInput").value.trim() || "busy beginners";
+  const goal = document.querySelector("#goalSelect").value;
+  const source = document.querySelector("#sourceContent").value.trim();
+  const channels = [...document.querySelectorAll("input[name='channels']:checked")].map((input) => input.value);
+  const angle = pick(angles, channels.length);
 
-  const { jobs, links } = await collectJobs(profile);
-  renderJobs(jobs, profile);
-  renderSearchLinks(links);
-  renderPlan(profile, jobs);
-  statusPill.textContent = `${jobs.length} direct jobs`;
-});
+  return {
+    topic,
+    audience,
+    goal,
+    channels: channels.length ? channels : ["instagram", "email"],
+    angle,
+    hook: pick(hooks, topic.length),
+    cta: pick(ctas, audience.length),
+    sourceSummary: source || `Use the free studio to create content for ${topic}, then connect the content to one monetized next step.`
+  };
+}
 
-resetBtn.addEventListener("click", () => {
-  form.reset();
-  document.querySelector("#roleInput").value = "automation framework";
-  document.querySelector("#locationInput").value = "United States";
-  document.querySelector("#keywordsInput").value = "Selenium, Playwright, JavaScript, CI/CD";
-  document.querySelector("#targetYearsInput").value = "1";
-  document.querySelector("#relatedYearsInput").value = "10";
-  document.querySelector("#hoursInput").value = "8";
-  document.querySelector("#experienceInput").value = "Manual QA lead with strong test planning, defect triage, exploratory testing, regression ownership, and stakeholder communication. Newer to automation frameworks.";
-  statusPill.textContent = "Ready";
-  jobResults.className = "job-results empty";
-  jobResults.innerHTML = "<p>Run a search to see live postings with direct job URLs.</p>";
-  searchLinks.innerHTML = "";
-  planOutput.innerHTML = "<p>Your custom plan will appear here after the first search.</p>";
-});
+function recommendedTool(campaign) {
+  const text = `${campaign.topic} ${campaign.goal}`.toLowerCase();
+  if (/video|youtube|tiktok|faceless/.test(text)) return "Descript for editing, captions, and clips";
+  if (/email|subscriber|lead/.test(text)) return "MailerLite or AWeber for follow-up";
+  if (/site|blog|hosting|wordpress/.test(text)) return "Bluehost for the site foundation";
+  if (/local|service|quote|review/.test(text)) return "AI Local Service Revenue Kit";
+  return "the affiliate toolbox below";
+}
 
-copyPlanBtn.addEventListener("click", async () => {
-  const text = planOutput.innerText.trim();
-  if (!text) return;
-  await navigator.clipboard.writeText(text);
-  copyPlanBtn.textContent = "Copied";
+function renderCampaign(campaign) {
+  state.lastCampaign = campaign;
+  document.querySelector("#briefTitle").textContent = `${campaign.topic} for ${campaign.audience}`;
+  document.querySelector("#briefMoney").textContent = `${campaign.goal} through ${recommendedTool(campaign)}`;
+  document.querySelector("#briefAngle").textContent = `${campaign.angle.label}: ${campaign.angle.structure}`;
+  document.querySelector("#briefAction").textContent = `Publish ${campaign.channels.length} assets and point them to one clear next step.`;
+
+  document.querySelector("#outputGrid").innerHTML = campaign.channels.map((channel) => {
+    const content = channelBuilders[channel](campaign);
+    return `
+      <article class="output-card">
+        <h3>${label(channel)}</h3>
+        <pre id="output-${channel}">${escapeHtml(content)}</pre>
+        <button class="button secondary copy-output" type="button" data-target="output-${channel}">Copy ${label(channel)}</button>
+      </article>
+    `;
+  }).join("");
+
+  document.querySelectorAll(".copy-output").forEach((button) => {
+    button.addEventListener("click", () => copyOutput(button));
+  });
+
+  renderCalendar(campaign);
+}
+
+function renderTools() {
+  document.querySelector("#toolGrid").innerHTML = tools.map((tool) => {
+    const hasUrl = Boolean(tool.url);
+    return `
+      <article class="tool-card">
+        <span>${escapeHtml(tool.category)}</span>
+        <h3>${escapeHtml(tool.name)}</h3>
+        <p>${escapeHtml(tool.description)}</p>
+        <a class="button ${hasUrl ? "secondary" : "disabled"}" href="${hasUrl ? escapeHtml(tool.url) : "#"}" ${hasUrl ? 'target="_blank" rel="nofollow sponsored noopener noreferrer"' : 'aria-disabled="true"'}>${escapeHtml(tool.button)}</a>
+      </article>
+    `;
+  }).join("");
+}
+
+function renderCalendar(campaign) {
+  const days = [
+    ["Day 1", `Publish the ${label(campaign.channels[0] || "instagram")} output and link to the free studio.`],
+    ["Day 2", "Turn the same idea into an email with one disclosed recommendation."],
+    ["Day 3", "Post a comparison or mistake angle and point to the $29 kit where relevant."],
+    ["Day 4", "Add the best-performing hook to a short video description or pinned comment."],
+    ["Day 5", "Send traffic to the tools section and measure affiliate clicks."],
+    ["Day 6", "Republish the strongest angle with a new opening line."],
+    ["Day 7", "Keep what got clicks, replies, or sales. Replace what did not."]
+  ];
+
+  document.querySelector("#calendarGrid").innerHTML = days.map(([day, task]) => `
+    <article>
+      <span>${day}</span>
+      <p>${escapeHtml(task)}</p>
+    </article>
+  `).join("");
+}
+
+function updateCalculator() {
+  const leads = Number(document.querySelector("#leads").value || 0);
+  const jobValue = Number(document.querySelector("#jobValue").value || 0);
+  const lift = Number(document.querySelector("#lift").value || 0) / 100;
+  const recovered = leads * jobValue * lift;
+  document.querySelector("#monthly").textContent = money.format(recovered);
+  document.querySelector("#annual").textContent = money.format(recovered * 12);
+  document.querySelector("#calcNote").textContent = `Based on recovering ${Math.round(lift * 100)}% of ${leads} missed or stale leads at ${money.format(jobValue)} per job.`;
+}
+
+function exportCampaign() {
+  if (!state.lastCampaign) return;
+  const parts = state.lastCampaign.channels.map((channel) => channelBuilders[channel](state.lastCampaign));
+  const text = [`Journey to Online Success Campaign`, `Topic: ${state.lastCampaign.topic}`, "", ...parts].join("\n\n---\n\n");
+  const blob = new Blob([text], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${state.lastCampaign.topic.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-campaign.txt`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function copyOutput(button) {
+  const target = document.querySelector(`#${button.dataset.target}`);
+  navigator.clipboard.writeText(target.textContent.trim()).catch(() => {});
+  const original = button.textContent;
+  button.textContent = "Copied";
   setTimeout(() => {
-    copyPlanBtn.textContent = "Copy plan";
-  }, 1500);
-});
+    button.textContent = original;
+  }, 1200);
+}
 
-function readProfile() {
-  const data = new FormData(form);
-  const selectedSources = data.getAll("sources");
-  return {
-    role: String(data.get("role") || "").trim(),
-    location: String(data.get("location") || "").trim(),
-    jobType: String(data.get("jobType") || "any"),
-    keywords: String(data.get("keywords") || "").trim(),
-    targetYears: Number(data.get("targetYears") || 0),
-    relatedYears: Number(data.get("relatedYears") || 0),
-    hours: Number(data.get("hours") || 8),
-    experience: String(data.get("experience") || "").trim(),
-    selectedSources: selectedSources.length ? selectedSources : ["remotive", "arbeitnow"]
+function label(value) {
+  const labels = {
+    instagram: "Instagram",
+    tiktok: "TikTok",
+    youtube: "YouTube",
+    faceless: "Faceless Video",
+    email: "Email",
+    blog: "Blog",
+    linkedin: "LinkedIn"
   };
-}
-
-function renderLoading(profile) {
-  jobResults.className = "job-results";
-  jobResults.innerHTML = `<p>Checking live feeds for <strong>${escapeHtml(profile.role)}</strong>. Cards shown here open actual job posts.</p>`;
-  searchLinks.innerHTML = "";
-}
-
-async function collectJobs(profile) {
-  const links = profile.selectedSources
-    .filter((source) => searchBuilders[source])
-    .map((source) => ({
-      source: sourceLabels[source],
-      url: searchBuilders[source](profile)
-    }));
-
-  const liveFeedTasks = profile.selectedSources
-    .filter((source) => feedSources[source])
-    .map((source) => feedSources[source](profile).catch(() => []));
-
-  const liveResults = (await Promise.all(liveFeedTasks)).flat();
-  return {
-    jobs: dedupeJobs(liveResults).slice(0, 14),
-    links
-  };
-}
-
-function dedupeJobs(jobs) {
-  const seen = new Set();
-  return jobs.filter((job) => {
-    const key = `${job.source}|${job.title}|${job.company}`.toLowerCase();
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-}
-
-function renderJobs(jobs, profile) {
-  jobResults.className = "job-results";
-  jobResults.innerHTML = "";
-
-  if (!jobs.length) {
-    jobResults.className = "job-results empty";
-    jobResults.innerHTML = `<p>No direct live postings loaded for <strong>${escapeHtml(profile.role)}</strong>. Use the search shortcuts below for sites that require their own search pages.</p>`;
-    return;
-  }
-
-  jobs.forEach((job) => {
-    const card = jobTemplate.content.cloneNode(true);
-    card.querySelector(".job-source").textContent = job.source;
-    card.querySelector("h3").textContent = job.title;
-    card.querySelector(".job-meta").textContent = `${job.company} - ${job.location}`;
-    card.querySelector(".job-tags").textContent = (job.tags || []).filter(Boolean).join(" - ");
-    card.querySelector("a").href = job.url;
-    jobResults.appendChild(card);
-  });
-}
-
-function renderSearchLinks(links) {
-  searchLinks.innerHTML = "";
-  if (!links.length) return;
-
-  const label = document.createElement("p");
-  label.className = "search-links-label";
-  label.textContent = "Search shortcuts";
-  searchLinks.appendChild(label);
-
-  links.forEach((link) => {
-    const item = searchLinkTemplate.content.cloneNode(true);
-    const anchor = item.querySelector("a");
-    anchor.href = link.url;
-    anchor.textContent = link.source;
-    searchLinks.appendChild(item);
-  });
-}
-
-function renderPlan(profile, jobs) {
-  const level = getLevel(profile.targetYears, profile.relatedYears);
-  const roleType = classifyRole(profile.role, profile.keywords);
-  const skills = buildSkillList(roleType, profile);
-  const weeks = estimateWeeks(level, profile.hours);
-  const phases = buildPhases(level, roleType, skills, profile, weeks);
-  const jobSignals = extractJobSignals(jobs, profile);
-
-  planOutput.innerHTML = `
-    <section class="plan-summary">
-      ${metric("Level", level.label)}
-      ${metric("Timeline", `${weeks} weeks`)}
-      ${metric("Weekly pace", `${profile.hours} hrs/week`)}
-      ${metric("Focus", roleType.title)}
-    </section>
-
-    <section class="checklist">
-      <h3>Profile read</h3>
-      <ul>
-        <li>${escapeHtml(level.summary)}</li>
-        <li>Use your ${profile.relatedYears} related years as proof of domain judgment, test design, release risk, and communication.</li>
-        <li>Position the ${profile.targetYears} target-skill year as hands-on foundation work, then close gaps with visible projects.</li>
-      </ul>
-    </section>
-
-    <section class="checklist">
-      <h3>Common job signals to prepare for</h3>
-      <ul>${jobSignals.map((signal) => `<li>${escapeHtml(signal)}</li>`).join("")}</ul>
-    </section>
-
-    ${phases.map(renderPhase).join("")}
-
-    <section class="checklist">
-      <h3>Portfolio proof</h3>
-      <ul>
-        <li>Create one public repo with a clean README, installation steps, test examples, CI screenshots, and a short architecture note.</li>
-        <li>Write three STAR stories: framework design decision, flaky test diagnosis, and release-risk call based on manual QA experience.</li>
-        <li>Apply to roles where you meet roughly 60% or more of the posting; track missing skills and feed them back into this plan weekly.</li>
-      </ul>
-    </section>
-  `;
-}
-
-function metric(label, value) {
-  return `<div class="metric"><span>${label}</span><strong>${escapeHtml(value)}</strong></div>`;
-}
-
-function renderPhase(phase) {
-  return `
-    <section class="phase">
-      <h3>${escapeHtml(phase.title)}</h3>
-      <p>${escapeHtml(phase.goal)}</p>
-      <ul>${phase.tasks.map((task) => `<li>${escapeHtml(task)}</li>`).join("")}</ul>
-    </section>
-  `;
-}
-
-function getLevel(targetYears, relatedYears) {
-  if (targetYears < 1 && relatedYears < 2) {
-    return {
-      label: "Entry foundation",
-      summary: "You should build fundamentals first, then add job-specific projects before applying aggressively."
-    };
-  }
-  if (targetYears < 2 && relatedYears >= 5) {
-    return {
-      label: "Bridge candidate",
-      summary: "You have senior adjacent experience, so the plan should convert that judgment into target-skill proof quickly."
-    };
-  }
-  if (targetYears < 3) {
-    return {
-      label: "Junior plus",
-      summary: "You have enough exposure to deepen patterns, improve reliability, and show independent delivery."
-    };
-  }
-  return {
-    label: "Experienced",
-    summary: "You should focus on architecture, scale, leadership signals, and advanced interview depth."
-  };
-}
-
-function classifyRole(role, keywords) {
-  const text = `${role} ${keywords}`.toLowerCase();
-  if (/automation|selenium|playwright|cypress|qa|test/.test(text)) {
-    return { key: "automation", title: "QA automation" };
-  }
-  if (/data|analyst|sql|etl|bi/.test(text)) {
-    return { key: "data", title: "Data skills" };
-  }
-  if (/front|react|angular|vue|javascript|typescript/.test(text)) {
-    return { key: "frontend", title: "Frontend engineering" };
-  }
-  if (/backend|api|java|python|node|server/.test(text)) {
-    return { key: "backend", title: "Backend engineering" };
-  }
-  if (/cloud|devops|ci|cd|docker|aws|azure/.test(text)) {
-    return { key: "cloud", title: "Cloud and delivery" };
-  }
-  return { key: "qa", title: "Role readiness" };
-}
-
-function buildSkillList(roleType, profile) {
-  const base = skillCatalog[roleType.key] || skillCatalog.qa;
-  const keywords = profile.keywords
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .slice(0, 6);
-  return [...new Set([...keywords, ...base])];
-}
-
-function estimateWeeks(level, hours) {
-  const base = {
-    "Entry foundation": 18,
-    "Bridge candidate": 12,
-    "Junior plus": 10,
-    "Experienced": 8
-  }[level.label] || 12;
-  if (hours >= 14) return Math.max(6, base - 3);
-  if (hours <= 5) return base + 5;
-  return base;
-}
-
-function buildPhases(level, roleType, skills, profile, weeks) {
-  const third = Math.max(2, Math.round(weeks / 3));
-  const roleExamples = {
-    automation: [
-      "Build a small framework with 8 UI tests, 6 API tests, fixtures, tags, and HTML reporting.",
-      "Add CI execution, trace/video artifacts where supported, and a flake investigation checklist.",
-      "Refactor one brittle flow into stable locators, explicit waits, and reusable page or screen objects."
-    ],
-    data: [
-      "Create a SQL portfolio dataset with validation queries and documented assumptions.",
-      "Automate one repeatable data-quality report.",
-      "Practice explaining data anomalies and tradeoffs to a non-technical stakeholder."
-    ],
-    frontend: [
-      "Build a small component app with forms, validation, state, and API loading states.",
-      "Add unit and accessibility checks.",
-      "Prepare explanations for rendering, state management, and browser debugging."
-    ],
-    backend: [
-      "Build a small REST API with validation, persistence, auth assumptions, and tests.",
-      "Add logging and error handling.",
-      "Practice explaining API contracts, data modeling, and deployment tradeoffs."
-    ],
-    cloud: [
-      "Create a CI pipeline that tests, reports, and gates merges.",
-      "Containerize a sample app with environment configuration.",
-      "Document rollback, secrets, and monitoring assumptions."
-    ],
-    qa: [
-      "Convert a manual regression area into a prioritized automated or semi-automated suite.",
-      "Create a risk matrix tied to business impact.",
-      "Practice release-readiness storytelling."
-    ]
-  };
-
-  return [
-    {
-      title: `Weeks 1-${third}: Close core gaps`,
-      goal: `Build fluency in the highest-frequency skills for ${roleType.title}.`,
-      tasks: [
-        `Study and practice: ${skills.slice(0, 4).join("; ")}.`,
-        "Spend the first hour each week reading 5 target job posts and updating your skill-gap notes.",
-        "Turn your current experience summary into resume bullets that connect business risk to technical execution."
-      ]
-    },
-    {
-      title: `Weeks ${third + 1}-${third * 2}: Build proof`,
-      goal: "Create portfolio evidence that hiring managers can inspect.",
-      tasks: roleExamples[roleType.key] || roleExamples.qa
-    },
-    {
-      title: `Weeks ${third * 2 + 1}-${weeks}: Interview and apply`,
-      goal: "Move from learning mode into targeted applications and interview practice.",
-      tasks: [
-        `Apply to 6-10 ${profile.jobType === "any" ? "" : profile.jobType} roles per week that mention ${profile.role}.`.replace(/\s+/g, " ").trim(),
-        "Practice one technical explanation and one behavioral story per day for 20 minutes.",
-        "Run mock interviews using real job descriptions: explain tradeoffs, not just tool definitions.",
-        "Refresh the plan every Sunday based on rejected postings, recruiter screens, and missing keywords."
-      ]
-    }
-  ];
-}
-
-function extractJobSignals(jobs, profile) {
-  const text = `${profile.role} ${profile.keywords} ${jobs.flatMap((job) => [job.title, ...(job.tags || [])]).join(" ")}`.toLowerCase();
-  const signals = [];
-  const checks = [
-    [/playwright|selenium|cypress/, "UI automation tools and stable end-to-end test design"],
-    [/api|rest|contract/, "API testing and service-level validation"],
-    [/ci|cd|jenkins|github actions|gitlab/, "CI/CD execution, reports, and build troubleshooting"],
-    [/javascript|typescript|java|python|c#/, "One implementation language used well enough to debug and refactor tests"],
-    [/sql|database|data/, "SQL and test data setup or validation"],
-    [/agile|scrum|jira/, "Agile delivery, ticket hygiene, and cross-functional communication"],
-    [/lead|senior|mentor/, "Leadership examples: standards, coaching, quality strategy, and risk calls"]
-  ];
-
-  checks.forEach(([pattern, signal]) => {
-    if (pattern.test(text)) signals.push(signal);
-  });
-
-  if (!signals.length) {
-    signals.push("Role vocabulary, must-have tools, portfolio proof, and interview stories from selected job posts");
-  }
-
-  return signals.slice(0, 6);
-}
-
-function normalizeUrl(url) {
-  if (!url) return "";
-  const value = String(url).trim();
-  if (value.startsWith("http://") || value.startsWith("https://")) return value;
-  if (value.startsWith("/")) return `https://remoteok.com${value}`;
-  return "";
-}
-
-function isActualJob(job) {
-  return Boolean(job.title && job.company && job.url && /^https?:\/\//.test(job.url));
-}
-
-function matchesProfile(job, role) {
-  const terms = String(role)
-    .toLowerCase()
-    .split(/[^a-z0-9+#]+/)
-    .filter((term) => term.length > 2 && !["job", "jobs", "role", "with", "and", "the"].includes(term));
-
-  if (!terms.length) return true;
-
-  const haystack = [
-    job.title,
-    job.company,
-    job.location,
-    job.description,
-    ...(job.tags || [])
-  ].join(" ").toLowerCase();
-
-  return terms.some((term) => haystack.includes(term));
-}
-
-function stripHtml(value) {
-  return String(value)
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  return labels[value] || value;
 }
 
 function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+  return String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[char]);
 }
 
-form.requestSubmit();
+document.querySelector("#topicSelect").addEventListener("change", (event) => {
+  document.querySelector("#customTopicWrap").classList.toggle("hidden", event.target.value !== "Custom topic");
+});
+
+document.querySelector("#campaignForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  renderCampaign(buildCampaign());
+});
+
+document.querySelector("#regenerateButton").addEventListener("click", () => renderCampaign(buildCampaign()));
+document.querySelector("#exportButton").addEventListener("click", exportCampaign);
+["#leads", "#jobValue", "#lift"].forEach((selector) => document.querySelector(selector).addEventListener("input", updateCalculator));
+
+const paymentLink = new URLSearchParams(window.location.search).get("pay");
+if (paymentLink) {
+  document.querySelectorAll("[data-buy-link]").forEach((link) => {
+    link.href = paymentLink;
+  });
+}
+
+renderTools();
+renderCampaign(buildCampaign());
+updateCalculator();

@@ -1,0 +1,7 @@
+Metric,Example Value,Your Value,Notes
+Missed or stale leads per month,35,,Count calls/forms/messages not followed up within 24 hours
+Average job value,420,,Use actual average ticket where possible
+Current close rate,18%,,Booked jobs divided by qualified leads
+Recovery lift estimate,9%,,Conservative estimate from faster follow-up
+Recovered monthly revenue,1323,,Missed leads x average job value x recovery lift
+Recovered annual revenue,15876,,Recovered monthly revenue x 12

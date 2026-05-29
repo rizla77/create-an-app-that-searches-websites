@@ -3,140 +3,249 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Job Skill Planner</title>
+    <title>Journey to Online Success | Creator Launch Hub</title>
+    <meta name="description" content="A launch-ready hub with creator content tools, affiliate resources, a job-skill planner, and a digital product for local service businesses.">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <main class="app-shell">
-      <section class="intro">
-        <div>
-          <p class="eyebrow">Job search + skill gap planner</p>
-          <h1>Find real job posts and turn them into a study plan.</h1>
-          <p class="lede">
-            Enter a target role, experience level, and study pace. The app pulls live postings where public feeds provide direct job URLs, then builds a focused roadmap.
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Journey to Online Success home">
+        <span class="brand-mark">JS</span>
+        <span>Journey to Online Success</span>
+      </a>
+      <nav aria-label="Primary">
+        <a href="#studio">Studio</a>
+        <a href="#offers">Offers</a>
+        <a href="#kit">Revenue Kit</a>
+        <a href="#tools">Tools</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Launch stack for making useful things pay</p>
+          <h1>Turn one idea into content, clicks, subscribers, and a product sale.</h1>
+          <p>
+            This hub combines the unfinished assets into one launchable offer: a free Creator Money Studio,
+            affiliate recommendations, the live Job Skill Planner, and a $29 AI Local Service Revenue Kit.
           </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#studio">Use the studio</a>
+            <a class="button secondary" href="#kit">Sell the kit</a>
+          </div>
+        </div>
+        <div class="launch-panel" aria-label="Launch funnel">
+          <article>
+            <span>01</span>
+            <strong>Free tool</strong>
+            <p>Creator campaign generator gives visitors an immediate reason to use the site.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <strong>Affiliate clicks</strong>
+            <p>Recommended tools sit next to the workflow where they are relevant.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <strong>Paid product</strong>
+            <p>The local service kit is ready as a low-ticket digital download.</p>
+          </article>
         </div>
       </section>
 
-      <section class="workspace" aria-label="Job planner workspace">
-        <form id="searchForm" class="panel controls">
-          <div class="panel-header">
-            <div>
-              <p class="eyebrow">Inputs</p>
-              <h2>Role search</h2>
-            </div>
-            <button class="icon-button" type="button" id="resetBtn" aria-label="Reset form" title="Reset form">
-              <span aria-hidden="true">R</span>
-            </button>
-          </div>
+      <section class="notice">
+        <strong>Affiliate disclosure:</strong> Some links may be affiliate links. If a visitor buys through one of them,
+        you may earn a commission at no extra cost to them. Results depend on traffic, offer quality, trust, and execution.
+      </section>
 
-          <label>
-            Target role or skill
-            <input id="roleInput" name="role" type="text" value="automation framework" autocomplete="off" required>
-          </label>
+      <section class="band studio-band" id="studio">
+        <div class="section-head">
+          <p class="eyebrow">Creator Money Studio</p>
+          <h2>Generate traffic assets from one topic.</h2>
+          <p>Pick a niche, paste notes or leave them blank, then generate platform-ready content with affiliate CTAs and a 7-day publishing plan.</p>
+        </div>
 
-          <div class="two-col">
+        <form class="studio-grid" id="campaignForm">
+          <section class="control-panel">
             <label>
-              Location
-              <input id="locationInput" name="location" type="text" value="United States" autocomplete="off">
-            </label>
-            <label>
-              Job type
-              <select id="jobTypeInput" name="jobType">
-                <option value="any">Any</option>
-                <option value="remote">Remote</option>
-                <option value="hybrid">Hybrid</option>
-                <option value="onsite">On-site</option>
+              Topic or niche
+              <select id="topicSelect" name="topic">
+                <option>AI tools for small business</option>
+                <option>Affiliate marketing for beginners</option>
+                <option>Faceless YouTube channels</option>
+                <option>Home office gear</option>
+                <option>Personal finance</option>
+                <option>Local service lead follow-up</option>
+                <option>Custom topic</option>
               </select>
             </label>
-          </div>
 
-          <label>
-            Keywords to prioritize
-            <input id="keywordsInput" name="keywords" type="text" value="Selenium, Playwright, JavaScript, CI/CD">
-          </label>
-
-          <div class="experience-grid">
-            <label>
-              Years in target skill
-              <input id="targetYearsInput" name="targetYears" type="number" min="0" max="40" step="0.5" value="1">
+            <label id="customTopicWrap" class="hidden">
+              Custom topic
+              <input id="customTopic" type="text" placeholder="Example: bookkeeping for trades businesses">
             </label>
-            <label>
-              Related years
-              <input id="relatedYearsInput" name="relatedYears" type="number" min="0" max="40" step="0.5" value="10">
-            </label>
-            <label>
-              Weekly study hours
-              <input id="hoursInput" name="hours" type="number" min="2" max="40" step="1" value="8">
-            </label>
-          </div>
 
-          <label>
-            Current experience summary
-            <textarea id="experienceInput" name="experience" rows="5">Manual QA lead with strong test planning, defect triage, exploratory testing, regression ownership, and stakeholder communication. Newer to automation frameworks.</textarea>
-          </label>
+            <label>
+              Notes, offer, or rough idea
+              <textarea id="sourceContent" rows="6" placeholder="Paste product notes, a blog idea, a video transcript, or leave blank for a generated angle."></textarea>
+            </label>
 
-          <fieldset>
-            <legend>Job websites</legend>
-            <div class="source-list">
-              <label><input type="checkbox" name="sources" value="remotive" checked> Remotive</label>
-              <label><input type="checkbox" name="sources" value="arbeitnow" checked> Arbeitnow</label>
-              <label><input type="checkbox" name="sources" value="remoteok" checked> Remote OK search</label>
-              <label><input type="checkbox" name="sources" value="linkedin" checked> LinkedIn search</label>
-              <label><input type="checkbox" name="sources" value="indeed" checked> Indeed search</label>
-              <label><input type="checkbox" name="sources" value="google" checked> Google Jobs search</label>
+            <div class="two-col">
+              <label>
+                Audience
+                <input id="audienceInput" type="text" value="busy beginners">
+              </label>
+              <label>
+                Goal
+                <select id="goalSelect">
+                  <option>Affiliate clicks</option>
+                  <option>Email subscribers</option>
+                  <option>Product sales</option>
+                  <option>Consultation bookings</option>
+                </select>
+              </label>
             </div>
-          </fieldset>
 
-          <button class="primary-button" type="submit">Search jobs and build plan</button>
+            <fieldset>
+              <legend>Traffic channels</legend>
+              <label><input type="checkbox" name="channels" value="instagram" checked> Instagram</label>
+              <label><input type="checkbox" name="channels" value="tiktok" checked> TikTok</label>
+              <label><input type="checkbox" name="channels" value="youtube" checked> YouTube</label>
+              <label><input type="checkbox" name="channels" value="faceless" checked> Faceless Video</label>
+              <label><input type="checkbox" name="channels" value="email" checked> Email</label>
+              <label><input type="checkbox" name="channels" value="blog"> Blog</label>
+              <label><input type="checkbox" name="channels" value="linkedin"> LinkedIn</label>
+            </fieldset>
+
+            <button class="button primary full" type="submit">Generate campaign</button>
+            <button class="button secondary full" id="regenerateButton" type="button">New variation</button>
+          </section>
+
+          <aside class="strategy-panel">
+            <p class="eyebrow">Campaign brief</p>
+            <h3 id="briefTitle">Ready for your first campaign</h3>
+            <dl>
+              <div>
+                <dt>Money path</dt>
+                <dd id="briefMoney">Free tool to affiliate link or product sale</dd>
+              </div>
+              <div>
+                <dt>Angle</dt>
+                <dd id="briefAngle">Practical proof and useful next step</dd>
+              </div>
+              <div>
+                <dt>Next action</dt>
+                <dd id="briefAction">Publish one short video and one email today.</dd>
+              </div>
+            </dl>
+            <button class="button secondary full" id="exportButton" type="button">Export campaign</button>
+          </aside>
         </form>
 
-        <section class="results-stack">
-          <section class="panel">
-            <div class="panel-header">
-              <div>
-                <p class="eyebrow">Search</p>
-                <h2>Job matches</h2>
-              </div>
-              <span id="statusPill" class="status-pill">Ready</span>
-            </div>
-            <div id="jobResults" class="job-results empty">
-              <p>Run a search to see live postings with direct job URLs.</p>
-            </div>
-            <div id="searchLinks" class="search-links" aria-label="Job website search links"></div>
-          </section>
+        <div class="output-grid" id="outputGrid" aria-live="polite"></div>
+      </section>
 
-          <section class="panel">
-            <div class="panel-header">
-              <div>
-                <p class="eyebrow">Roadmap</p>
-                <h2>Study plan</h2>
-              </div>
-              <button class="secondary-button" id="copyPlanBtn" type="button">Copy plan</button>
+      <section class="band offers-band" id="offers">
+        <div class="section-head">
+          <p class="eyebrow">Product ladder</p>
+          <h2>Keep the current products, but sell them from one place.</h2>
+          <p>The fast launch does not need five separate brands. It needs one clear path from free value to a monetized next step.</p>
+        </div>
+        <div class="offer-grid">
+          <article>
+            <span>Free</span>
+            <h3>Creator Money Studio</h3>
+            <p>Lead with the content generator so visitors get a useful result before seeing recommendations.</p>
+            <a class="button secondary" href="#studio">Open studio</a>
+          </article>
+          <article>
+            <span>Live</span>
+            <h3>Job Skill Planner</h3>
+            <p>The domain already serves this tool. Keep it as a career audience asset and link it from the hub.</p>
+            <a class="button secondary" href="https://journeytoonlinesuccess.com/" target="_blank" rel="noreferrer">View live planner</a>
+          </article>
+          <article>
+            <span>$29</span>
+            <h3>AI Local Service Revenue Kit</h3>
+            <p>A ready-to-sell digital product for local businesses that need faster replies, quote follow-up, and review requests.</p>
+            <a class="button primary" href="#kit">See product</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="band kit-band" id="kit">
+        <div class="kit-layout">
+          <div>
+            <p class="eyebrow">Digital product</p>
+            <h2>AI Local Service Revenue Kit</h2>
+            <p>
+              Sell this as a simple download for contractors, cleaners, detailers, med spas, landscapers, clinics,
+              and appointment-based local businesses that lose money to slow follow-up.
+            </p>
+            <ul class="check-list">
+              <li>AI reply prompts for missed calls, quotes, objections, reviews, and old leads.</li>
+              <li>Daily and weekly staff SOPs for lead follow-up.</li>
+              <li>ROI worksheet and 30-day promotional content calendar.</li>
+              <li>Checkout-ready price positioning at $29.</li>
+            </ul>
+            <div class="hero-actions">
+              <a class="button primary" data-buy-link href="product/AI-Local-Service-Revenue-Kit.md">Preview product file</a>
+              <a class="button secondary" href="product/30-day-content-calendar.csv">Open content calendar</a>
             </div>
-            <div id="planOutput" class="plan-output">
-              <p>Your custom plan will appear here after the first search.</p>
-            </div>
-          </section>
-        </section>
+          </div>
+          <figure class="product-media">
+            <img src="assets/hero-revenue-kit.png" alt="AI Local Service Revenue Kit dashboard preview">
+          </figure>
+        </div>
+
+        <div class="calculator">
+          <form class="calc-panel" aria-label="Revenue recovery calculator">
+            <label>
+              Missed or stale leads per month
+              <input id="leads" type="number" value="35" min="0">
+            </label>
+            <label>
+              Average job value
+              <input id="jobValue" type="number" value="420" min="0">
+            </label>
+            <label>
+              Recovery lift from faster follow-up
+              <input id="lift" type="number" value="9" min="0" max="100">
+            </label>
+          </form>
+          <aside class="result-panel">
+            <span>Estimated recovered monthly revenue</span>
+            <strong id="monthly">$1,323</strong>
+            <span>Estimated annual upside</span>
+            <strong id="annual">$15,876</strong>
+            <p id="calcNote">Based on recovering 9% of 35 missed or stale leads at $420 per job.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="band tools-band" id="tools">
+        <div class="section-head">
+          <p class="eyebrow">Affiliate toolbox</p>
+          <h2>Recommended tools to place beside the workflow.</h2>
+          <p>Use real links where you already have them. Cards without approved links should stay disabled instead of inventing URLs.</p>
+        </div>
+        <div class="tool-grid" id="toolGrid"></div>
+      </section>
+
+      <section class="band calendar-band">
+        <div class="section-head">
+          <p class="eyebrow">7-day launch sprint</p>
+          <h2>Use the site to publish, not just plan.</h2>
+        </div>
+        <div class="calendar" id="calendarGrid"></div>
       </section>
     </main>
 
-    <template id="jobCardTemplate">
-      <article class="job-card">
-        <div>
-          <span class="job-source"></span>
-          <h3></h3>
-          <p class="job-meta"></p>
-          <p class="job-tags"></p>
-        </div>
-        <a target="_blank" rel="noreferrer">View job</a>
-      </article>
-    </template>
-
-    <template id="searchLinkTemplate">
-      <a class="search-link" target="_blank" rel="noreferrer"></a>
-    </template>
+    <footer class="footer">
+      <p>Journey to Online Success. Build useful assets, disclose monetized links, and move traffic to one clear next step.</p>
+      <a href="#top">Back to top</a>
+    </footer>
 
     <script src="app.js"></script>
   </body>
