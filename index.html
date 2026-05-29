@@ -66,84 +66,124 @@
           <p>Pick a niche, paste notes or leave them blank, then generate platform-ready content with affiliate CTAs and a 7-day publishing plan.</p>
         </div>
 
-        <form class="studio-grid" id="campaignForm">
-          <section class="control-panel">
-            <label>
-              Topic or niche
-              <select id="topicSelect" name="topic">
-                <option>AI tools for small business</option>
-                <option>Affiliate marketing for beginners</option>
-                <option>Faceless YouTube channels</option>
-                <option>Home office gear</option>
-                <option>Personal finance</option>
-                <option>Local service lead follow-up</option>
-                <option>Custom topic</option>
-              </select>
-            </label>
+        <div class="studio-console">
+          <div class="console-bar" aria-label="Studio status">
+            <div>
+              <span class="console-kicker">Launch Console</span>
+              <strong>Campaign builder online</strong>
+            </div>
+            <div class="console-metrics" aria-label="Campaign workflow">
+              <span>Topic</span>
+              <span>Assets</span>
+              <span>Traffic</span>
+              <span>Offer</span>
+            </div>
+          </div>
 
-            <label id="customTopicWrap" class="hidden">
-              Custom topic
-              <input id="customTopic" type="text" placeholder="Example: bookkeeping for trades businesses">
-            </label>
+          <form class="studio-grid" id="campaignForm">
+            <section class="control-panel">
+              <div class="panel-title">
+                <span>01</span>
+                <div>
+                  <h3>Campaign input</h3>
+                  <p>Start with one clear audience, one traffic angle, and one monetized next step.</p>
+                </div>
+              </div>
 
-            <label>
-              Notes, offer, or rough idea
-              <textarea id="sourceContent" rows="6" placeholder="Paste product notes, a blog idea, a video transcript, or leave blank for a generated angle."></textarea>
-            </label>
-
-            <div class="two-col">
               <label>
-                Audience
-                <input id="audienceInput" type="text" value="busy beginners">
-              </label>
-              <label>
-                Goal
-                <select id="goalSelect">
-                  <option>Affiliate clicks</option>
-                  <option>Email subscribers</option>
-                  <option>Product sales</option>
-                  <option>Consultation bookings</option>
+                Topic or niche
+                <select id="topicSelect" name="topic">
+                  <option>AI tools for small business</option>
+                  <option>Affiliate marketing for beginners</option>
+                  <option>Faceless YouTube channels</option>
+                  <option>Home office gear</option>
+                  <option>Personal finance</option>
+                  <option>Local service lead follow-up</option>
+                  <option>Custom topic</option>
                 </select>
               </label>
+
+              <label id="customTopicWrap" class="hidden">
+                Custom topic
+                <input id="customTopic" type="text" placeholder="Example: bookkeeping for trades businesses">
+              </label>
+
+              <label>
+                Notes, offer, or rough idea
+                <textarea id="sourceContent" rows="6" placeholder="Paste product notes, a blog idea, a video transcript, or leave blank for a generated angle."></textarea>
+              </label>
+
+              <div class="two-col">
+                <label>
+                  Audience
+                  <input id="audienceInput" type="text" value="busy beginners">
+                </label>
+                <label>
+                  Goal
+                  <select id="goalSelect">
+                    <option>Affiliate clicks</option>
+                    <option>Email subscribers</option>
+                    <option>Product sales</option>
+                    <option>Consultation bookings</option>
+                  </select>
+                </label>
+              </div>
+
+              <fieldset>
+                <legend>Traffic channels</legend>
+                <label><input type="checkbox" name="channels" value="instagram" checked> Instagram</label>
+                <label><input type="checkbox" name="channels" value="tiktok" checked> TikTok</label>
+                <label><input type="checkbox" name="channels" value="youtube" checked> YouTube</label>
+                <label><input type="checkbox" name="channels" value="faceless" checked> Faceless Video</label>
+                <label><input type="checkbox" name="channels" value="email" checked> Email</label>
+                <label><input type="checkbox" name="channels" value="blog"> Blog</label>
+                <label><input type="checkbox" name="channels" value="linkedin"> LinkedIn</label>
+              </fieldset>
+
+              <div class="button-row">
+                <button class="button primary full" type="submit">Generate launch assets</button>
+                <button class="button secondary full" id="regenerateButton" type="button">New variation</button>
+              </div>
+            </section>
+
+            <aside class="strategy-panel">
+              <div class="panel-title">
+                <span>02</span>
+                <div>
+                  <h3>Money path</h3>
+                  <p>Keep the visitor moving from useful output to one realistic offer.</p>
+                </div>
+              </div>
+              <h3 id="briefTitle">Ready for your first campaign</h3>
+              <dl>
+                <div>
+                  <dt>Monetization route</dt>
+                  <dd id="briefMoney">Free tool to affiliate link or product sale</dd>
+                </div>
+                <div>
+                  <dt>Content angle</dt>
+                  <dd id="briefAngle">Practical proof and useful next step</dd>
+                </div>
+                <div>
+                  <dt>Next move</dt>
+                  <dd id="briefAction">Publish one short video and one email today.</dd>
+                </div>
+              </dl>
+              <button class="button secondary full" id="exportButton" type="button">Export campaign</button>
+            </aside>
+          </form>
+
+          <section class="outputs-shell" aria-label="Generated campaign assets">
+            <div class="panel-title">
+              <span>03</span>
+              <div>
+                <h3>Generated assets</h3>
+                <p>Copy one asset, publish it, then use the next one as follow-up traffic.</p>
+              </div>
             </div>
-
-            <fieldset>
-              <legend>Traffic channels</legend>
-              <label><input type="checkbox" name="channels" value="instagram" checked> Instagram</label>
-              <label><input type="checkbox" name="channels" value="tiktok" checked> TikTok</label>
-              <label><input type="checkbox" name="channels" value="youtube" checked> YouTube</label>
-              <label><input type="checkbox" name="channels" value="faceless" checked> Faceless Video</label>
-              <label><input type="checkbox" name="channels" value="email" checked> Email</label>
-              <label><input type="checkbox" name="channels" value="blog"> Blog</label>
-              <label><input type="checkbox" name="channels" value="linkedin"> LinkedIn</label>
-            </fieldset>
-
-            <button class="button primary full" type="submit">Generate campaign</button>
-            <button class="button secondary full" id="regenerateButton" type="button">New variation</button>
+            <div class="output-grid" id="outputGrid" aria-live="polite"></div>
           </section>
-
-          <aside class="strategy-panel">
-            <p class="eyebrow">Campaign brief</p>
-            <h3 id="briefTitle">Ready for your first campaign</h3>
-            <dl>
-              <div>
-                <dt>Money path</dt>
-                <dd id="briefMoney">Free tool to affiliate link or product sale</dd>
-              </div>
-              <div>
-                <dt>Angle</dt>
-                <dd id="briefAngle">Practical proof and useful next step</dd>
-              </div>
-              <div>
-                <dt>Next action</dt>
-                <dd id="briefAction">Publish one short video and one email today.</dd>
-              </div>
-            </dl>
-            <button class="button secondary full" id="exportButton" type="button">Export campaign</button>
-          </aside>
-        </form>
-
-        <div class="output-grid" id="outputGrid" aria-live="polite"></div>
+        </div>
       </section>
 
       <section class="band offers-band" id="offers">
