@@ -129,6 +129,33 @@
                 </label>
               </div>
 
+              <div class="two-col">
+                <label>
+                  Offer to promote
+                  <select id="offerSelect">
+                    <option value="aiKit">AI Local Service Revenue Kit</option>
+                    <option value="bluehost">Bluehost hosting</option>
+                    <option value="mailerlite">MailerLite email list</option>
+                    <option value="descript">Descript video editing</option>
+                    <option value="leadcreator">LeadCreator lead magnet</option>
+                  </select>
+                </label>
+                <label>
+                  Destination link
+                  <input id="destinationInput" type="url" value="product/AI-Local-Service-Revenue-Kit.md">
+                </label>
+              </div>
+
+              <label>
+                Main promise
+                <input id="promiseInput" type="text" value="launch one useful campaign today without overbuilding">
+              </label>
+
+              <label>
+                Lead magnet
+                <input id="leadMagnetInput" type="text" value="7-day launch plan">
+              </label>
+
               <fieldset>
                 <legend>Traffic channels</legend>
                 <label><input type="checkbox" name="channels" value="instagram" checked> Instagram</label>
@@ -169,7 +196,11 @@
                   <dd id="briefAction">Publish one short video and one email today.</dd>
                 </div>
               </dl>
-              <button class="button secondary full" id="exportButton" type="button">Export campaign</button>
+              <div class="action-stack">
+                <a class="button primary full" id="primaryDestinationLink" href="product/AI-Local-Service-Revenue-Kit.md">Open offer page</a>
+                <button class="button secondary full" id="copyAllButton" type="button">Copy all assets</button>
+                <button class="button secondary full" id="exportButton" type="button">Export campaign</button>
+              </div>
             </aside>
           </form>
 
@@ -287,6 +318,6 @@
       <a href="#top">Back to top</a>
     </footer>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=real-output-1"></script>
   </body>
 </html>

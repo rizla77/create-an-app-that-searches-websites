@@ -466,6 +466,11 @@ fieldset input {
   gap: 10px;
 }
 
+.action-stack {
+  display: grid;
+  gap: 10px;
+}
+
 .hidden {
   display: none;
 }
@@ -526,6 +531,37 @@ dd {
   gap: 12px;
   align-content: start;
   padding: 20px;
+}
+
+.output-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.output-card header h3,
+.output-card header p {
+  margin: 0;
+}
+
+.output-card header p {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.output-badge {
+  display: inline-grid;
+  width: fit-content;
+  margin-bottom: 8px;
+  border: 1px solid rgba(43, 224, 161, 0.2);
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: rgba(43, 224, 161, 0.08);
+  color: var(--green);
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
 }
 
 .output-card pre {
